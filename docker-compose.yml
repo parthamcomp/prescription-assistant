@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    ports: 
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./data/hf-cache:/root/.cache/huggingface
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=llama3.2
+      - DATA_DIR=/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
